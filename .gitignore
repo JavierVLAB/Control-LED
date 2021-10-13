@@ -8,3 +8,4 @@ application.windows32
 application.windows64
 application.macosx
 out
+FastLed-Arnet-ESP32-Arduino/arduino_secrets.h
