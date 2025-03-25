@@ -44,11 +44,11 @@ boolean node_connected = false;
 
 // LED Strip
 // const int numLeds = 300; // Change if your setup has more or less LED's
-const int numLeds = 140;
+const int numLeds = 100;
 const int numberOfChannels = numLeds * 3; // Total number of DMX channels you want to receive (1 led = 3 channels)
 
-#define DATA_PIN 6  //The data pin that the APA_102 strips are connected to.
-#define CLOCK_PIN 7 //The clock pin that the APA_102 strips are connected to.
+#define DATA_PIN 13  // D7.  The data pin that the APA_102 strips are connected to.
+#define CLOCK_PIN 14 // D5.  The clock pin that the APA_102 strips are connected to.
 
 CRGB leds[numLeds];
 
@@ -109,6 +109,7 @@ int wifi_managment() {
 
   server.begin();
 
+  return 0;
 }
 
 

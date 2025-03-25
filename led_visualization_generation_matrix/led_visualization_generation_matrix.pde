@@ -1,8 +1,8 @@
 
-int numLeds = 150;
+int numLeds = 170;
 //String arduinoIP = "192.168.1.114";
 //String arduinoIP = "192.168.1.22";
-String arduinoIP = "192.168.1.53"; //red unavailable
+String arduinoIP = "192.168.150.198";
 
 float[] vector = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
@@ -26,7 +26,7 @@ void draw () {
     rect(i*20+20, height/2 + 50, 20, -f*100);
   }
   
-  visualizacion(0);
+  visualizacion(4);
   
   
   sendDMX(numLeds, arduinoIP);

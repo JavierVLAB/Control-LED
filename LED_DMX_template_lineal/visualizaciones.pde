@@ -27,20 +27,20 @@ void AudioSetup() {
 
 
 void visualizacion(int n) {
-  if (n == 0) { 
-    fill(255, 0, 0);
-    rect(mouseX, mouseY, 150, 150);
+  if (n == 0) { // cuadro que se mueve con el mouse
+    fill(100, 0, 0);
+    rect(mouseX, mouseY, 20, 80);
   }
-  if (n == 1) {
-    int t = frameCount/2;
+  if (n == 1) { // 1 rallas de colores que se mueven automanticamente
+    int t = frameCount;
     colorMode(HSB);
     for (int i = 0; i < 9; i++) {
-      fill((i*10+t)%255, 255, 255);
-      rect((i*300 + t)%width, 0, 50, height);
+      fill((i*10+t)%155, 155, 155);
+      rect((i*400 + t)%width, 0, 20, height);
     }
   }
-  if (n == 2) {
-    rect(mouseX, mouseY, 100, 100);
+  if (n == 2) { // 2 = 
+    rect(0, 150, 100, 100);
   }
   if (n == 3) {
     int t = frameCount;
