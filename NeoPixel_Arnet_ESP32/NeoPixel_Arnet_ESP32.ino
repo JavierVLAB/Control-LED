@@ -15,11 +15,7 @@
 /////////
 
 #include <ArtnetWifi.h>
-#include <FastLED.h>
-
 #include <Adafruit_NeoPixel.h>
-#define PIN        6 
-
 
 //Wifi settings
 #include "arduino_secrets.h"
@@ -46,16 +42,17 @@ WiFiServer server(80);
 boolean node_connected = false;
 
 // LED Strip
-// const int numLeds = 300; // Change if your setup has more or less LED's
-const int numLeds = 150;
-const int numberOfChannels = numLeds * 3; // Total number of DMX channels you want to receive (1 led = 3 channels)
 
 
+// Neopixels settings
 
-#define DATA_PIN 13  // D7.  The data pin that the APA_102 strips are connected to.
-#define CLOCK_PIN 14 // D5.  The clock pin that the APA_102 strips are connected to.
+#define NUMPIXELS 300
+#define PIN       16 //IO16
+#define DELAYVAL 500
 
-CRGB leds[numLeds];
+Adafruit_NeoPixel pixels(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
+
+
 
 // Artnet settings
 ArtnetWifi artnet;
@@ -97,7 +94,7 @@ int wifi_managment() {
         network_id = i;
         break;
       } else {
-        Serial.println("Network Not found! ");
+        //Serial.println("Network Not found! ");
       }
     }
   }
@@ -169,18 +166,27 @@ void onDmxFrame(uint16_t universe, uint16_t length, uint8_t sequence, uint8_t* d
   
   sendFrame = 1;
   // set brightness of the whole strip Send the Brightness in the first byte from the 15th universe
-  if (universe == 15){
-    FastLED.setBrightness(data[0]);
-  }
+  //if (universe == 15){
+  //  FastLED.setBrightness(data[0]);
+  //}
+
   // read universe and put into the right part of the display buffer
-  for (int i = 0; i < length / 3; i++){
+
+
+  for(int i=0; i<length / 3; i++) { // For each pixel...
     int led = i + (universe - startUniverse) * (length / 3);
-    if (led < numLeds){
-      leds[led] = CRGB(data[i * 3], data[i * 3 + 1], data[i * 3 + 2]);
+    // pixels.Color() takes RGB values, from 0,0,0 up to 255,255,255
+    // Here we're using a moderately bright green color:
+
+    if (led < NUMPIXELS){
+      pixels.setPixelColor(led, pixels.Color(data[i * 3], data[i * 3 + 1], data[i * 3 + 2]));
     }
+    
   }
+
+  pixels.show();   // Send the updated pixel colors to the hardware.
+
   previousDataLength = length;
-  FastLED.show();
 }
 
 // ---------------- init Test ---------------//
@@ -190,20 +196,20 @@ void initTest()
 {
   int stopLed = 10;
   for (int i = 0 ; i < stopLed ; i += 5)
-    leds[i] = CRGB(0, 0, 10);
-  FastLED.show();
+    pixels.setPixelColor(i, pixels.Color(0,0,10));
+  pixels.show();
   delay(2000);
   for (int i = 0 ; i < stopLed ; i += 5)
-    leds[i] = CRGB(0, 10, 0);
-  FastLED.show();
+    pixels.setPixelColor(i, pixels.Color(0,10,0));
+  pixels.show();
   delay(2000);
   for (int i = 0 ; i < stopLed ; i += 5)
-    leds[i] = CRGB(10, 0, 0);
-  FastLED.show();
+    pixels.setPixelColor(i, pixels.Color(10,0,0));
+  pixels.show();
   delay(2000);
   for (int i = 0 ; i < stopLed ; i += 5)
-    leds[i] = CRGB(0, 0, 0);
-  FastLED.show();
+    pixels.setPixelColor(i, pixels.Color(0,0,0));
+  pixels.show();
 }
 
 // -----------  Show Connection ---------
@@ -211,11 +217,15 @@ void initTest()
 
 void showConnection(boolean connection) {
   for (int i = 0 ; i < 5 ; i++)
-    leds[i] = connection ? CRGB::Blue : CRGB:: Red;
-  FastLED.show();
+    if(connection){
+      pixels.setPixelColor(i, pixels.Color(0,100,0));
+    } else {
+      pixels.setPixelColor(i, pixels.Color(100,0,0));
+    }
+  pixels.show();
 
   delay(5000);
-  FastLED.clear();
+  pixels.clear();
 }
 
 // ----------- Builtin Led Blink ------------
@@ -254,8 +264,7 @@ void setup()
   //Serial.print("LED_BUILTIN = ");
   //Serial.println(LED_BUILTIN, DEC);
 
-  //FastLED.addLeds<WS2812, DATA_PIN, GRB>(leds, numLeds); // Strip Led Neopixels (WS2812)
-  FastLED.addLeds<APA102, DATA_PIN, CLOCK_PIN, BGR>(leds, numLeds); // Matrix LED APA102
+
 
   wifi_managment();
 
